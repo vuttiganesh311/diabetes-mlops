@@ -1,3 +1,4 @@
+import sklearn
 from sklearn.ensemble import RandomForestClassifier
 import joblib
 from src.preprocess import preprocess

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Diabetes Prediction</title>
+</head>
+<body>
+    <h2>Diabetes Prediction</h2>
+    <form id="predict-form">
+        <label>Pregnancies: <input type="number" name="Pregnancies" required /></label><br/>
+        <label>Glucose: <input type="number" name="Glucose" required /></label><br/>
+        <label>BloodPressure: <input type="number" name="BloodPressure" required /></label><br/>
+        <label>SkinThickness: <input type="number" name="SkinThickness" required /></label><br/>
+        <label>Insulin: <input type="number" name="Insulin" required /></label><br/>
+        <label>BMI: <input type="number" step="any" name="BMI" required /></label><br/>
+        <label>DiabetesPedigreeFunction: <input type="number" step="any" name="DiabetesPedigreeFunction" required /></label><br/>
+        <label>Age: <input type="number" name="Age" required /></label><br/><br/>
+        <button type="submit">Predict</button>
+    </form>
+    <h3 id="result">Prediction: </h3>
+
+    <script>
+        const form = document.getElementById('predict-form');
+        const result = document.getElementById('result');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(form);
+            const features = {};
+
+            // Build features object from form inputs
+            formData.forEach((value, key) => {
+                features[key] = isNaN(value) ? value : Number(value);
+            });
+
+            try {
+                const response = await fetch('http://127.0.0.1:5000/predict', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ features })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const data = await response.json();
+                result.textContent = `Prediction: ${data.prediction}`; // "Yes" or "No"
+            } catch (error) {
+                result.textContent = `Error: ${error.message}`;
+            }
+        });
+    </script>
+</body>
+</html>
